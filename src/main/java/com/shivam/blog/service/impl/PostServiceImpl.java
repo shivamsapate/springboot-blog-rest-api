@@ -3,8 +3,13 @@ package com.shivam.blog.service.impl;
 import com.shivam.blog.entity.Post;
 import com.shivam.blog.exception.ResourceNotFoundException;
 import com.shivam.blog.payload.PostDto;
+import com.shivam.blog.payload.PostResponse;
 import com.shivam.blog.repository.PostRepository;
 import com.shivam.blog.service.PostService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +35,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        return posts.stream().map(this::mapToDto).collect(Collectors.toList());
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Post> page = postRepository.findAll(pageable);
+        // get content from page object
+        List<Post> postsList = page.getContent();
+        List<PostDto> content = postsList.stream().map(this::mapToDto).collect(Collectors.toList());
+        PostResponse postResponse = new PostResponse();
+        postResponse.setPageNo(page.getNumber());
+        postResponse.setPageSize(page.getSize());
+        postResponse.setContent(content);
+        postResponse.setTotalElements(page.getTotalElements());
+        postResponse.setLast(page.isLast());
+        postResponse.setTotalPages(page.getTotalPages());
+
+        return postResponse;
     }
 
     @Override

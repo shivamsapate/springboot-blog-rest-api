@@ -1,12 +1,12 @@
 package com.shivam.blog.controller;
 
 import com.shivam.blog.payload.PostDto;
+import com.shivam.blog.payload.PostResponse;
 import com.shivam.blog.service.PostService;
+import com.shivam.blog.utils.AppConstant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -26,8 +26,13 @@ public class PostController {
 
     // get all posts
     @GetMapping
-    public List<PostDto> getAllPosts() {
-        return postService.getAllPosts();
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = AppConstant.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstant.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "title", required = false) String sortBy,
+            @RequestParam(value = "sortDir", required = false, defaultValue = AppConstant.DEFAULT_SORT_ORDER) String sortDir
+    ) {
+        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
     //get post by id
@@ -38,13 +43,13 @@ public class PostController {
 
     //update post with it's id
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable("id") long id){
-        return new ResponseEntity<>(postService.updatePost(postDto,id), HttpStatus.OK);
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable("id") long id) {
+        return new ResponseEntity<>(postService.updatePost(postDto, id), HttpStatus.OK);
     }
 
     // Deleting post
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable("id") long id){
+    public ResponseEntity<String> deletePost(@PathVariable("id") long id) {
         postService.deletePost(id);
         return new ResponseEntity<>("Post entity deleted successfully", HttpStatus.OK);
     }
