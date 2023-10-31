@@ -8,6 +8,7 @@ import com.shivam.blog.payload.CommentDto;
 import com.shivam.blog.repository.CommentRepository;
 import com.shivam.blog.repository.PostRepository;
 import com.shivam.blog.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,12 @@ public class CommentServiceImpl implements CommentService {
 
     private PostRepository postRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    private ModelMapper mapper;
+
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper mapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
 
@@ -87,20 +91,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDto mapToDto(Comment comment) {
-        CommentDto dto = new CommentDto();
-        dto.setId(comment.getId());
-        dto.setBody(comment.getBody());
-        dto.setName(comment.getName());
-        dto.setEmail(comment.getEmail());
-        return dto;
+        return mapper.map(comment, CommentDto.class);
     }
 
     private Comment mapToEntity(CommentDto dto) {
-        Comment comment = new Comment();
-        comment.setName(dto.getName());
-        comment.setEmail(dto.getEmail());
-        comment.setBody(dto.getBody());
-        comment.setId(dto.getId());
-        return comment;
+         return mapper.map(dto, Comment.class);
+//        Comment comment = new Comment();
+//        comment.setName(dto.getName());
+//        comment.setEmail(dto.getEmail());
+//        comment.setBody(dto.getBody());
+//        comment.setId(dto.getId());
+//        return comment;
     }
 }
