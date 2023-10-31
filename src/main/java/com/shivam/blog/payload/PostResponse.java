@@ -1,6 +1,5 @@
 package com.shivam.blog.payload;
 
-import com.shivam.blog.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
