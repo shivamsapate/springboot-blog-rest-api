@@ -1,5 +1,6 @@
 package com.shivam.blog.config;
 
+import com.shivam.blog.exception.CustomAuthenticationFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableMethodSecurity // enable security for methods like get post put
@@ -54,4 +56,11 @@ public class SecurityConfig {
 
         return new InMemoryUserDetailsManager(shivam, admin);
     }
+
+    //Handled custom error handling for authenticationFailure
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+
 }
